@@ -8,18 +8,40 @@
 
 1. pom.xml
 ```xml
-<!-- Dubbo -->
+<!-- Dubbo (include spring) -->
 <dependency>
 	<groupId>com.alibaba</groupId>
 	<artifactId>dubbo</artifactId>
 	<version>2.6.2</version>
 </dependency>
 
-<!-- Zookeeper -->
+<!-- Curator (include zookeeper) -->
+<!-- Note: need to change zookeeper version,the beta version zookeeper has issues -->
 <dependency>
 	<groupId>org.apache.curator</groupId>
 	<artifactId>curator-recipes</artifactId>
 	<version>4.0.1</version>
+	<exclusions>
+		<exclusion>
+			 <groupId>org.apache.zookeeper</groupId>
+			 <artifactId>zookeeper</artifactId>
+		</exclusion>
+	</exclusions>
+</dependency>
+<dependency>
+	<groupId>org.apache.zookeeper</groupId>
+	<artifactId>zookeeper</artifactId>
+	<version>3.4.6</version>
+	<exclusions>
+		<exclusion>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>slf4j-api</artifactId>
+		</exclusion>
+		<exclusion>
+			 <groupId>org.slf4j</groupId>
+			 <artifactId>slf4j-log4j12</artifactId>
+		</exclusion>
+	</exclusions>
 </dependency>
 
 <!-- Junit -->
@@ -40,7 +62,7 @@
 	   http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 	
 	<dubbo:application name="demoProvider"/>
-	<dubbo:registry address="zookeeper://192.168.99.100:2181"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
 	<dubbo:protocol name="dubbo" port="20880"/>
 	<dubbo:service interface="com.cj.dubbo.service.DemoService" ref="demoService"/>
 	<bean id="demoService" class="com.cj.dubbo.service.DemoServiceImpl"/>
@@ -74,7 +96,7 @@ public class DemoServiceImpl implements DemoService {
 	   http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
 	<dubbo:application name="demoConsumer"/>
-	<dubbo:registry address="zookeeper://192.168.99.100:2181"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
 	<dubbo:reference id="demoService" check="false" interface="com.cj.dubbo.service.DemoService"/>
 </beans>
 ```
@@ -119,6 +141,13 @@ public class DemoDubboTest {
 }
 ```
 
+8. check zookeeper
+```bash
+[zk: zk01:2181(CONNECTED) 9] ls /dubbo
+[com.cj.dubbo.service.DemoService]
+[zk: zk01:2181(CONNECTED) 10] ls /dubbo/com.cj.dubbo.service.DemoService
+[consumers, configurators, routers, providers]
+```
 
 ### SpringBoot Dubbo
 
@@ -145,15 +174,15 @@ public class DemoDubboTest {
 	<version>2.0.0</version>
 </dependency> -->
 
-<!-- Dubbo -->
+<!-- Dubbo (include spring) -->
 <dependency>
 	<groupId>com.alibaba</groupId>
 	<artifactId>dubbo</artifactId>
 	<version>2.6.2</version>
 </dependency>
 
-<!-- Zookeeper -->
-<!-- Note: curator includes zookeeper: need to change zookeeper version,beta version has issues -->
+<!-- Curator (include zookeeper) -->
+<!-- Note: need to change zookeeper version,the beta version zookeeper has issues -->
 <dependency>
 	<groupId>org.apache.curator</groupId>
 	<artifactId>curator-recipes</artifactId>
@@ -203,8 +232,8 @@ log4j.appender.stdout.layout.ConversionPattern=[%d{dd/MM/yy hh:mm:ss:sss z}] %t 
 	   http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 	
 	<dubbo:application name="helloProvider"/>
-	<dubbo:registry address="zookeeper://192.168.99.100:2181"/>
-	<dubbo:protocol name="dubbo" port="20880"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
+	<dubbo:protocol name="dubbo" port="20881"/>
 	<dubbo:service interface="com.cj.dubbo.service.HelloService"  ref="helloService"/>
 	
 </beans>
@@ -262,18 +291,40 @@ public class HelloProviderApplication {
 
 1. pom.xml
 ```xml
-<!-- Zookeeper -->
-<dependency>
-	<groupId>org.apache.curator</groupId>
-	<artifactId>curator-recipes</artifactId>
-	<version>4.0.1</version>
-</dependency>
-
 <!-- Dubbo (include Spring) -->
 <dependency>
 	<groupId>com.alibaba</groupId>
 	<artifactId>dubbo</artifactId>
 	<version>2.6.2</version>
+</dependency>
+
+<!-- Curator (include zookeeper) -->
+<!-- Note: need to change zookeeper version,the beta version zookeeper has issues -->
+<dependency>
+	<groupId>org.apache.curator</groupId>
+	<artifactId>curator-recipes</artifactId>
+	<version>4.0.1</version>
+	<exclusions>
+		<exclusion>
+			 <groupId>org.apache.zookeeper</groupId>
+			 <artifactId>zookeeper</artifactId>
+		</exclusion>
+	</exclusions>
+</dependency>
+<dependency>
+	<groupId>org.apache.zookeeper</groupId>
+	<artifactId>zookeeper</artifactId>
+	<version>3.4.6</version>
+	<exclusions>
+		<exclusion>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>slf4j-api</artifactId>
+		</exclusion>
+		<exclusion>
+			 <groupId>org.slf4j</groupId>
+			 <artifactId>slf4j-log4j12</artifactId>
+		</exclusion>
+	</exclusions>
 </dependency>
 
 <!-- Junit -->
@@ -294,7 +345,7 @@ public class HelloProviderApplication {
 	   http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
 	<dubbo:application name="helloConsumer"/>
-	<dubbo:registry address="zookeeper://192.168.99.100:2181"/>
+	<dubbo:registry address="zookeeper://localhost:2181"/>
 	<dubbo:reference id="helloService" check="false"  interface="com.cj.dubbo.service.HelloService"/>
 	
 	<bean id="helloConsumerService" class="com.cj.dubbo.consumer.HelloConsumerService">
@@ -350,4 +401,20 @@ public class DemoDubboTest {
 		
 	}
 }
+```
+
+#### Check zookeeper
+
+```bash
+[zk: zk01:2181(CONNECTED) 9] ls /dubbo
+[com.cj.dubbo.service.DemoService, com.cj.dubbo.service.HelloService]
+
+[zk: zk01:2181(CONNECTED) 18] ls /dubbo/com.cj.dubbo.service.HelloService      
+[consumers, configurators, routers, providers]
+
+[zk: zk01:2181(CONNECTED) 19] ls /dubbo/com.cj.dubbo.service.HelloService/providers
+[dubbo%3A%2F%2F192.168.31.78%3A20881%2Fcom.cj.dubbo.service.HelloService%3Fanyhost%3Dtrue%26application%3DhelloProvider%26dubbo%3D2.6.2%26generic%3Dfalse%26interface%3Dcom.cj.dubbo.service.HelloService%26methods%3DsayHello%26pid%3D1359%26side%3Dprovider%26timestamp%3D1549812635667]
+
+[zk: zk01:2181(CONNECTED) 20] ls /dubbo/com.cj.dubbo.service.HelloService/consumers
+[]
 ```
